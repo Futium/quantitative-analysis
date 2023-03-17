@@ -32,7 +32,10 @@ lastPrice_historical = df['mean']
 
 ### global variables
 # iterations
-times = 20
+# do all data
+times = len(df['mean'])
+
+
 # value of k for moving average
 k = 10
 
