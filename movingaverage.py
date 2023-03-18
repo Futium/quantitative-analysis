@@ -175,15 +175,47 @@ def evaluate_performance():
 
     desired_action = "BUY"
 
-    out = [window['Price'] for window in df2.rolling(window=eval_len)
-           if len(window) == eval_len and window['Action'].iloc[0] == desired_action]
+
+    eval_len = 3
     
+    price0 = [window['Price'].iloc[0] for window in df2.rolling(window=eval_len)
+           if len(window) == eval_len and window['Action'].iloc[0] == desired_action]
+    price1 = [window['Price'].iloc[1] for window in df2.rolling(window=eval_len)
+           if len(window) == eval_len and window['Action'].iloc[0] == desired_action]
+    price2 = [window['Price'].iloc[eval_len-1] for window in df2.rolling(window=eval_len)
+           if len(window) == eval_len and window['Action'].iloc[0] == desired_action]
 
     # new = pd.DataFrame(out, columns=['', 'Current Time', 'Price', 'Moving Average', 'Action'])
 
+    # out = pd.DataFrame(out)
+
     # out.to_csv('out.csv')
 
-    pprint(out)
+    columns = []
+
+    prices = []
+
+    for num in range(eval_len):
+        prices.append([window['Price'].iloc[num] for window in df2.rolling(window=eval_len)
+           if len(window) == eval_len and window['Action'].iloc[0] == desired_action])
+        columns.append("Price" + str(num))
+
+    data = pd.DataFrame(columns=columns)
+
+    for num in range(eval_len):
+        data.iloc[:, num] = prices[num]
+
+    # data['Price0'] = price0
+    # data['Price1'] = price1
+    # data['Price2'] = price2
+
+
+
+    print(data)
+
+    data.to_csv('dataTable.csv')
+
+    # pprint()
 
 
 if __name__ == "__main__":
