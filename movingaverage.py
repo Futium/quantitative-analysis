@@ -169,45 +169,44 @@ def evaluate_performance():
 
     df2 = df2.iloc[k:]
     df2 = df2.drop('Unnamed: 0', axis=1)
-    # df2 = df2.reset_index(drop=True)
-
-    # print(df2)
 
     desired_action = "BUY"
-
-
-    eval_len = 3
     
-    price0 = [window['Price'].iloc[0] for window in df2.rolling(window=eval_len)
-           if len(window) == eval_len and window['Action'].iloc[0] == desired_action]
-    price1 = [window['Price'].iloc[1] for window in df2.rolling(window=eval_len)
-           if len(window) == eval_len and window['Action'].iloc[0] == desired_action]
-    price2 = [window['Price'].iloc[eval_len-1] for window in df2.rolling(window=eval_len)
-           if len(window) == eval_len and window['Action'].iloc[0] == desired_action]
-
-    # new = pd.DataFrame(out, columns=['', 'Current Time', 'Price', 'Moving Average', 'Action'])
-
-    # out = pd.DataFrame(out)
-
-    # out.to_csv('out.csv')
-
-    columns = []
+    columns_names = []
 
     prices = []
 
-    for num in range(eval_len):
-        prices.append([window['Price'].iloc[num] for window in df2.rolling(window=eval_len)
+    comparison_point = 0
+
+    # create list of column names
+    for n in range(eval_len):
+        columns_names.append('Price ' + str(n))
+
+    # define column names from columns     
+    data = pd.DataFrame(columns=columns_names)
+
+    # create prices list and then add each array of prices to the column
+    for n in range(eval_len):
+        # get prices for each window each column is all the data for the nth value of the eval_len
+        prices.append([window['Price'].iloc[n] for window in df2.rolling(window=eval_len)
            if len(window) == eval_len and window['Action'].iloc[0] == desired_action])
-        columns.append("Price" + str(num))
+        
+        # set each column equal to the nth price list
+        data[data.columns[n]] = prices[n]
 
-    data = pd.DataFrame(columns=columns)
+        if n != 0:
+             # find the names of the price columns that we are looking for
+            nth_column_name = data.columns[n]
+            comparision_column_name = data.columns[comparison_point]
+        
+            # create the name of the column for the specific piece of data
+            key_name = 'Price ' + str(n) + ' From Price ' + str(comparison_point)
+            data[key_name] = data[nth_column_name] - data[comparision_column_name]
+       
+        
+    
 
-    for num in range(eval_len):
-        data.iloc[:, num] = prices[num]
 
-    # data['Price0'] = price0
-    # data['Price1'] = price1
-    # data['Price2'] = price2
 
 
 
