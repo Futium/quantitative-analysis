@@ -4,11 +4,20 @@ import time
 from termcolor import colored
 import numpy as np
 from datetime import date
+from pprint import pprint
+
+# get time 
+t = time.localtime()
+
+# get today's date
+today = date.today()
 
 ### get historical data
 ticker = input("What Ticker are you seeking analysis on?\n").upper()
 
-data = yf.download(ticker, period='1d', interval='1m', prepost=True)
+# if we want to get knew data
+# data = yf.download(ticker, period='1d', interval='1m', prepost=True)
+data = pd.read_csv(ticker + '.csv')
 
 df = pd.DataFrame(data)
 
@@ -33,19 +42,27 @@ lastPrice_historical = df['mean']
 ### global variables
 # iterations
 # do all data
-times = len(df['mean'])
-
+iterations = len(df['mean'])
 
 # value of k for moving average
-k = 10
+k = 5
 
-t = time.localtime()
-ticker_price = []
+# window of evaluation (i.e. how many data points do we wait until it materializes)
+eval_len = 3
+
+# how precise we want our numbers
+prec_lvl = 5
+
+
+### initialize lists
 change = []
+ticker_price = []
 current_time = []
-pct_change = []
+list_ma = []
+action = []
 
 def get_price_and_price(x):
+    pct_change = []
     ticker_price.append(lastPrice_historical[x])
 
     current_time.append(time.strftime("%H:%M:%S", t))
@@ -54,19 +71,20 @@ def get_price_and_price(x):
 
     pct_change.append(change[x] / ticker_price[x-1])
 
+    print('\n')
     if x == 0:
         return 0
     elif change[x] > 0:
-        print('Price: ' + colored(str(round(ticker_price[x], 5)), 'green'))
+        print('Price: ' + colored(str(round(ticker_price[x], prec_lvl)), 'green'))
         # print("\n    Change: ", colored(str(round(change[x], 6)), 'green'))
     elif change[x] < 0:
-        print('Price: ' + colored(str(round(ticker_price[x], 5)), 'red'))
+        print('Price: ' + colored(str(round(ticker_price[x], prec_lvl)), 'red'))
         # print("\n    Change: ", colored(str(round(change[x], 6)), 'red'))
     else: 
-        print('Price: ' + colored(str(round(ticker_price[x], 5)), 'grey'))
+        print('Price: ' + colored(str(round(ticker_price[x], prec_lvl)), 'grey'))
         # print("\n    Change: ", colored(str(round(change[x], 6)), 'grey'))
     
-    if x >= 10:
+    if x >= k:
         get_moving_average(ticker_price, x)
 
     # if ticker_price[x] > ticker_price[0]:
@@ -75,10 +93,10 @@ def get_price_and_price(x):
     #     print(colored("            Down for Period", 'red'))
     # else:
     #     print(colored("            --", 'grey'))
-
+    #
     ### acceleration
     # acceleration = abs(pct_change[x] - pct_change[x-1])
-
+    #
     # if (acceleration > 0) and (pct_change[x] > 0):
     #     print("            ", colored(str(round(acceleration, 4)), 'green'))
     # elif (acceleration > 0) and (pct_change[x] < 0):
@@ -92,27 +110,33 @@ def get_price_and_price(x):
     
 
 def main():
-    for x in range(times):
+    # set first k items in the list as blank for MA and Action since we wont have a data point for it
+    for i in range(k):
+        list_ma.append("")
+    for i in range(k):
+        action.append("")
+    
+    ### get price info
+    for x in range(iterations):
         get_price_and_price(x)
         time.sleep(0.001)
+
+
+    # add the lists to the data table for price, ma, and actions
     price_ma_actions = pd.DataFrame(columns=['Current Time', 'Price', 'Moving Average', 'Action'])
     price_ma_actions['Current Time'] = current_time
     price_ma_actions['Price'] = ticker_price
     price_ma_actions['Moving Average'] = list_ma
     price_ma_actions['Action'] = action
 
-    today = date.today()
 
-    price_ma_actions.to_csv('historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv')
+    # 
+    price_ma_actions.to_csv('k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv')
+
+    evaluate_performance()
+    
 
 
-list_ma = []
-remaining = []
-action = []
-for i in range(k):
-    list_ma.append(0)
-for i in range(k):
-    action.append(0)
 
 def get_moving_average(ticker_price, x):
     df = pd.DataFrame(ticker_price)
@@ -120,14 +144,14 @@ def get_moving_average(ticker_price, x):
     moving_avg_ewm = df.ewm(k).mean().iloc[-1].values
 
     ## round moving average to nearest 5 dec
-    rounded = round(moving_avg_ewm[0], 5)
+    rounded = round(moving_avg_ewm[0], prec_lvl)
 
     #make first k slots empty
 
     # add list of ma's
     list_ma.append(rounded)
 
-    print(colored('MA: ' + str(rounded) + '\n', 'blue'))
+    print(colored('MA: ' + str(rounded), 'blue'))
 
     if rounded > ticker_price[x]:
         action.append("BUY")
@@ -138,6 +162,30 @@ def get_moving_average(ticker_price, x):
     else:
         action.append("-----")
         print("-----")
+ 
+
+def evaluate_performance():
+    df2 = pd.read_csv('k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv')
+
+    df2 = df2.iloc[k:]
+    df2 = df2.drop('Unnamed: 0', axis=1)
+    # df2 = df2.reset_index(drop=True)
+
+    # print(df2)
+
+    desired_action = "BUY"
+
+    out = [window for window in df2.rolling(window=eval_len)
+           if len(window) == eval_len and 
+           window['Action'].iloc[0] == desired_action
+           ]
+    
+    # new = pd.DataFrame(out, columns=['', 'Current Time', 'Price', 'Moving Average', 'Action'])
+
+    # out.to_csv('out.csv')
+
+    pprint(out)
+
 
 if __name__ == "__main__":
     main()
