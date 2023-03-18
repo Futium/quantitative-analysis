@@ -175,11 +175,10 @@ def evaluate_performance():
 
     desired_action = "BUY"
 
-    out = [window for window in df2.rolling(window=eval_len)
-           if len(window) == eval_len and 
-           window['Action'].iloc[0] == desired_action
-           ]
+    out = [window['Price'] for window in df2.rolling(window=eval_len)
+           if len(window) == eval_len and window['Action'].iloc[0] == desired_action]
     
+
     # new = pd.DataFrame(out, columns=['', 'Current Time', 'Price', 'Moving Average', 'Action'])
 
     # out.to_csv('out.csv')
