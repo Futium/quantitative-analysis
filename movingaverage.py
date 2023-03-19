@@ -5,6 +5,7 @@ from termcolor import colored
 import numpy as np
 from datetime import date
 from pprint import pprint
+import os
 
 # get time 
 t = time.localtime()
@@ -48,11 +49,16 @@ iterations = len(df['mean'])
 k = 5
 
 # window of evaluation (i.e. how many data points do we wait until it materializes)
-eval_len = 3
+eval_len = 5
 
 # how precise we want our numbers
 prec_lvl = 5
 
+# where CSV's will be saved
+csv_save_location = 'CSVs'
+
+
+filename = 'k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv'
 
 ### initialize lists
 change = []
@@ -130,8 +136,8 @@ def main():
     price_ma_actions['Action'] = action
 
 
-    # 
-    price_ma_actions.to_csv('k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv')
+    # save file to folder and filename
+    price_ma_actions.to_csv(os.path.join(csv_save_location, filename))
 
     evaluate_performance()
     
@@ -165,7 +171,7 @@ def get_moving_average(ticker_price, x):
  
 
 def evaluate_performance():
-    df2 = pd.read_csv('k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv')
+    df2 = pd.read_csv(csv_save_location + "/" + filename)
 
     df2 = df2.iloc[k:]
     df2 = df2.drop('Unnamed: 0', axis=1)
@@ -185,6 +191,8 @@ def evaluate_performance():
     # define column names from columns     
     data = pd.DataFrame(columns=columns_names)
 
+    gain_table = pd.DataFrame()
+
     # create prices list and then add each array of prices to the column
     for n in range(eval_len):
         # get prices for each window each column is all the data for the nth value of the eval_len
@@ -200,19 +208,31 @@ def evaluate_performance():
             comparision_column_name = data.columns[comparison_point]
         
             # create the name of the column for the specific piece of data
-            key_name = 'Price ' + str(n) + ' From Price ' + str(comparison_point)
+            key_name = 'P ' + str(n) + ' - P ' + str(comparison_point)
             data[key_name] = data[nth_column_name] - data[comparision_column_name]
-       
-        
+            
+            # create a table with the gains from all of the stocks
+            gain_table[key_name] = 100 * (data[nth_column_name] - data[comparision_column_name]) / data[comparision_column_name]
+
     
+    # find maximum of each row  
+    data['Greatest Gain %'] = gain_table.max(axis=1)
+
+    # find the column it occurred in
+    data['Time of Success'] = gain_table.idxmax(axis=1)
+        
+    most_successful_time = data.mode()['Time of Success'][0]
+
+    print(most_successful_time)
+
+    ttl = data['Greatest Gain %'].sum()
+
+    print(ttl)
 
 
 
 
-
-    print(data)
-
-    data.to_csv('dataTable.csv')
+    data.to_csv(os.path.join(csv_save_location, 'dataTable.csv'))
 
     # pprint()
 
