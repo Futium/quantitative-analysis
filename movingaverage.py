@@ -46,16 +46,22 @@ lastPrice_historical = df['mean']
 iterations = len(df['mean'])
 
 # value of k for moving average
-k = 5
+k = 3
 
 # window of evaluation (i.e. how many data points do we wait until it materializes)
-eval_len = 5
+eval_len = 2
 
 # how precise we want our numbers
 prec_lvl = 5
 
 # where CSV's will be saved
 csv_save_location = 'CSVs'
+
+# where performance bottomlines are saved
+performance_folder = 'Performance'
+
+# where performance figures are saved
+performance_figures_folder = 'Performance Figures'
 
 
 filename = 'k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv'
@@ -212,9 +218,13 @@ def evaluate_performance():
             data[key_name] = data[nth_column_name] - data[comparision_column_name]
             
             # create a table with the gains from all of the stocks
+            print(data[nth_column_name])
+            print(data[comparision_column_name])
             gain_table[key_name] = 100 * (data[nth_column_name] - data[comparision_column_name]) / data[comparision_column_name]
 
     
+    gain_table.to_csv('temp.csv')
+
     # find maximum of each row  
     data['Greatest Gain %'] = gain_table.max(axis=1)
 
@@ -223,16 +233,33 @@ def evaluate_performance():
         
     most_successful_time = data.mode()['Time of Success'][0]
 
-    print(most_successful_time)
+    ### if we always made the right choice:
+    perfect_ttl = str(round(data['Greatest Gain %'].sum(), prec_lvl)) + '%'
 
-    ttl = data['Greatest Gain %'].sum()
+    print(key_name)
 
-    print(ttl)
+    ### total assuming you use the same method every time
+    actual_ttl = str(round(gain_table[key_name].sum(), prec_lvl)) + '%'
 
+    print(actual_ttl)
 
+    print(perfect_ttl)
 
+    # create performance figures file name
+    performance_figures_file_name = 'performance_figures_with_eval_len_' + str(eval_len) + '_k_of_' + str(k) + '_on_' + str(today) + '.csv'
 
-    data.to_csv(os.path.join(csv_save_location, 'dataTable.csv'))
+    # save to csv
+    data.to_csv(os.path.join(performance_figures_folder, performance_figures_file_name))
+    
+    # find the performance figures and make them into a table
+    values = [[most_successful_time, actual_ttl, perfect_ttl]]
+    performance = pd.DataFrame(values, columns=['Most Frequent Row:', 'TTL Based on this Row:', 'Perfect Total:'])
+
+    # create file name for performance
+    performance_file_name = 'performance_with_eval_len_' + str(eval_len) + '_k_of_' + str(k) + '_on_' + str(today) + '.csv'
+
+    # save to csv
+    performance.to_csv(os.path.join(performance_folder, performance_file_name))
 
     # pprint()
 
