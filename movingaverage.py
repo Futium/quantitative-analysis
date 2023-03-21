@@ -6,6 +6,8 @@ import numpy as np
 from datetime import date
 from pprint import pprint
 import os
+import config
+import historical_data
 
 # get time 
 t = time.localtime()
@@ -16,57 +18,21 @@ today = date.today()
 ### get historical data
 ticker = input("What Ticker are you seeking analysis on?\n").upper()
 
-### global variables
+k = config.k
+eval_len = config.eval_len
+prec_lvl = config.prec_lvl
+csv_save_location = config.csv_save_location
+performance_folder = config.performance_folder
+performance_figures_folder = config.performance_figures_folder
 
-# value of k for moving average
-k = 3
-
-# window of evaluation (i.e. how many data points do we wait until it materializes)
-eval_len = 3
-
-# how precise we want our numbers
-prec_lvl = 5
-
-# where CSV's will be saved
-csv_save_location = 'CSVs'
-
-# where performance bottomlines are saved
-performance_folder = 'Performance'
-
-# where performance figures are saved
-performance_figures_folder = 'Performance Figures'
-
-
+# what the file name should be 
 filename = 'k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv'
-data_filename = ticker + '.csv'
 
-### if we want to get new data
-# most today's data
-data = yf.download(ticker, period='1d', interval='1m', prepost=True)
+# grab the data whether historical or present
+df = historical_data.get_historical_data(ticker)
 
-# save file to folder and filename
-data.to_csv(os.path.join(csv_save_location, data_filename))
-
-# # historical file data
-# data = pd.read_csv(os.path.join(csv_save_location, data_filename)
-
-df = pd.DataFrame(data)
-
-df.index = df.index.astype(str)
-
-# drop all rows that include 4 AM, 5AM, 6AM, 7AM, 8AM, I'm not gonna be up at that time
-df = df[df.index.str.contains(" 04:") == False]
-df = df[df.index.str.contains(" 05:") == False]
-df = df[df.index.str.contains(" 06:") == False]
-df = df[df.index.str.contains(" 07:") == False]
-df = df[df.index.str.contains(" 08:") == False]
-df = df[df.index.str.contains(" 09:0") == False]
-df = df[df.index.str.contains(" 09:1") == False]
-df = df[df.index.str.contains(" 09:2") == False]
-
-# calculate mean
-df['mean'] = df.iloc[:, 1:5].mean(axis=1)
-
+if df == False:
+    quit()
 
 lastPrice_historical = df['mean']
 
@@ -156,8 +122,6 @@ def main():
     evaluate_performance()
     
 
-
-
 def get_moving_average(ticker_price, x):
     df = pd.DataFrame(ticker_price)
     # exponential moving average
@@ -228,8 +192,6 @@ def evaluate_performance():
             data[key_name] = data[nth_column_name] - data[comparision_column_name]
             
             # create a table with the gains from all of the stocks
-            print(data[nth_column_name])
-            print(data[comparision_column_name])
             gain_table[key_name] = 100 * (data[nth_column_name] - data[comparision_column_name]) / data[comparision_column_name]
     
     gain_table.to_csv('temp.csv')
@@ -245,14 +207,8 @@ def evaluate_performance():
     ### if we always made the right choice:
     perfect_ttl = str(round(data['Greatest Gain %'].sum(), prec_lvl)) + '%'
 
-    print(key_name)
-
     ### total assuming you use the same method every time
     actual_ttl = str(round(gain_table[key_name].sum(), prec_lvl)) + '%'
-
-    print(actual_ttl)
-
-    print(perfect_ttl)
 
     # create performance figures file name
     performance_figures_file_name = 'performance_figures_with_eval_len_' + str(eval_len) + '_k_of_' + str(k) + '_on_' + str(today) + '.csv'
