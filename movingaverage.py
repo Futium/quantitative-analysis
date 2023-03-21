@@ -16,37 +16,7 @@ today = date.today()
 ### get historical data
 ticker = input("What Ticker are you seeking analysis on?\n").upper()
 
-### if we want to get new data
-# most today's data
-data = yf.download(ticker, period='1d', interval='1m', prepost=True)
-
-# historical file data
-# data = pd.read_csv(ticker + '.csv')
-
-df = pd.DataFrame(data)
-
-df.index = df.index.astype(str)
-
-# drop all rows that include 4 AM, 5AM, 6AM, 7AM, 8AM, I'm not gonna be up at that time
-df = df[df.index.str.contains(" 04:") == False]
-df = df[df.index.str.contains(" 05:") == False]
-df = df[df.index.str.contains(" 06:") == False]
-df = df[df.index.str.contains(" 07:") == False]
-df = df[df.index.str.contains(" 08:") == False]
-df = df[df.index.str.contains(" 09:0") == False]
-df = df[df.index.str.contains(" 09:1") == False]
-df = df[df.index.str.contains(" 09:2") == False]
-
-# calculate mean
-df['mean'] = df.iloc[:, 1:5].mean(axis=1)
-
-
-lastPrice_historical = df['mean']
-
 ### global variables
-# iterations
-# do all data
-iterations = len(df['mean'])
 
 # value of k for moving average
 k = 3
@@ -68,6 +38,41 @@ performance_figures_folder = 'Performance Figures'
 
 
 filename = 'k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(today) + '.csv'
+data_filename = ticker + '.csv'
+
+### if we want to get new data
+# most today's data
+data = yf.download(ticker, period='1d', interval='1m', prepost=True)
+
+# save file to folder and filename
+data.to_csv(os.path.join(csv_save_location, data_filename))
+
+# # historical file data
+# data = pd.read_csv(os.path.join(csv_save_location, data_filename)
+
+df = pd.DataFrame(data)
+
+df.index = df.index.astype(str)
+
+# drop all rows that include 4 AM, 5AM, 6AM, 7AM, 8AM, I'm not gonna be up at that time
+df = df[df.index.str.contains(" 04:") == False]
+df = df[df.index.str.contains(" 05:") == False]
+df = df[df.index.str.contains(" 06:") == False]
+df = df[df.index.str.contains(" 07:") == False]
+df = df[df.index.str.contains(" 08:") == False]
+df = df[df.index.str.contains(" 09:0") == False]
+df = df[df.index.str.contains(" 09:1") == False]
+df = df[df.index.str.contains(" 09:2") == False]
+
+# calculate mean
+df['mean'] = df.iloc[:, 1:5].mean(axis=1)
+
+
+lastPrice_historical = df['mean']
+
+# iterations
+# do all data
+iterations = len(df['mean'])
 
 ### initialize lists
 change = []
@@ -134,7 +139,7 @@ def main():
     ### get price info
     for x in range(iterations):
         get_price_and_price(x)
-        time.sleep(1.0)
+        time.sleep(0.0001)
 
 
     # add the lists to the data table for price, ma, and actions
@@ -202,6 +207,8 @@ def evaluate_performance():
 
     gain_table = pd.DataFrame()
 
+    df2.to_csv('temp32123.csv')
+
     # create prices list and then add each array of prices to the column
     for n in range(eval_len):
         # get prices for each window each column is all the data for the nth value of the eval_len
@@ -224,7 +231,6 @@ def evaluate_performance():
             print(data[nth_column_name])
             print(data[comparision_column_name])
             gain_table[key_name] = 100 * (data[nth_column_name] - data[comparision_column_name]) / data[comparision_column_name]
-
     
     gain_table.to_csv('temp.csv')
 
