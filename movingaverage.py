@@ -16,9 +16,12 @@ today = date.today()
 ### get historical data
 ticker = input("What Ticker are you seeking analysis on?\n").upper()
 
-# if we want to get knew data
-# data = yf.download(ticker, period='1d', interval='1m', prepost=True)
-data = pd.read_csv(ticker + '.csv')
+### if we want to get new data
+# most today's data
+data = yf.download(ticker, period='1d', interval='1m', prepost=True)
+
+# historical file data
+# data = pd.read_csv(ticker + '.csv')
 
 df = pd.DataFrame(data)
 
@@ -49,7 +52,7 @@ iterations = len(df['mean'])
 k = 3
 
 # window of evaluation (i.e. how many data points do we wait until it materializes)
-eval_len = 2
+eval_len = 3
 
 # how precise we want our numbers
 prec_lvl = 5
@@ -256,7 +259,7 @@ def evaluate_performance():
     performance = pd.DataFrame(values, columns=['Most Frequent Row:', 'TTL Based on this Row:', 'Perfect Total:'])
 
     # create file name for performance
-    performance_file_name = 'performance_with_eval_len_' + str(eval_len) + '_k_of_' + str(k) + '_on_' + str(today) + '.csv'
+    performance_file_name = 'performance_with_for_' + ticker + 'with_eval_len_' + str(eval_len) + '_k_of_' + str(k) + '_on_' + str(today) + '.csv'
 
     # save to csv
     performance.to_csv(os.path.join(performance_folder, performance_file_name))
