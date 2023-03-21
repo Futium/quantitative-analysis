@@ -134,7 +134,7 @@ def main():
     ### get price info
     for x in range(iterations):
         get_price_and_price(x)
-        time.sleep(0.001)
+        time.sleep(1.0)
 
 
     # add the lists to the data table for price, ma, and actions
@@ -259,7 +259,7 @@ def evaluate_performance():
     performance = pd.DataFrame(values, columns=['Most Frequent Row:', 'TTL Based on this Row:', 'Perfect Total:'])
 
     # create file name for performance
-    performance_file_name = 'performance_with_for_' + ticker + 'with_eval_len_' + str(eval_len) + '_k_of_' + str(k) + '_on_' + str(today) + '.csv'
+    performance_file_name = 'performance_with_for_' + ticker + '_with_eval_len_' + str(eval_len) + '_k_of_' + str(k) + '_on_' + str(today) + '.csv'
 
     # save to csv
     performance.to_csv(os.path.join(performance_folder, performance_file_name))
