@@ -1,3 +1,28 @@
+### get price and price
+
+# if ticker_price[x] > ticker_price[0]:
+    #     print(colored("            Up for Period", 'green'))
+    # elif ticker_price[x] < ticker_price[0]:
+    #     print(colored("            Down for Period", 'red'))
+    # else:
+    #     print(colored("            --", 'grey'))
+    #
+    ### acceleration
+    # acceleration = abs(pct_change[x] - pct_change[x-1])
+    #
+    # if (acceleration > 0) and (pct_change[x] > 0):
+    #     print("            ", colored(str(round(acceleration, 4)), 'green'))
+    # elif (acceleration > 0) and (pct_change[x] < 0):
+    #     print("            ", colored(str(round(acceleration, 4)), 'red'))
+    # elif (acceleration < 0) and (pct_change[x] > 0):
+    #     print("            ", colored(str(round(acceleration, 4)), 'green'))
+    # elif (acceleration < 0) and (pct_change[x] < 0):
+    #     print("            ", colored(str(round(acceleration, 4)), 'red'))
+    # else:
+    #     print(colored("            --", 'grey'))
+
+## evaluate performance
+
 # columns_names = []
 
     # prices = []
