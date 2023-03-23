@@ -5,13 +5,17 @@ import yfinance as yf
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+import naming
 
 csv_save_location = config.csv_save_location
+
 
 # get today's date
 today = date.today()
 
 def get_historical_data(ticker):
+    filename = naming.filename(ticker)
+
     # date for the data we are looking for
     if config.data_date.lower() != 'today':
         data_date = config.data_date
@@ -21,7 +25,7 @@ def get_historical_data(ticker):
         data_date = today
         
     # what the raw data file name should be 
-    data_filename = ticker + ' ' + str(data_date) + '.csv'
+    data_filename = 'raw-data-' + filename
     
     if config.currency.lower() == 'historical':
         # check if this file exists first. 
@@ -50,27 +54,39 @@ def get_historical_data(ticker):
         # save file to folder and filename
         data.to_csv(os.path.join(csv_save_location, data_filename))
 
-        return filter_data(data)
+        return filter_data(data, filename)
     
     
 
-def filter_data(data):
+def filter_data(data, filename):
 
     df = pd.DataFrame(data)
 
     df.index = df.index.astype(str)
-
-    # drop all rows that include 4 AM, 5AM, 6AM, 7AM, 8AM, I'm not gonna be up at that time
-    df = df[df.index.str.contains(" 04:") == False]
-    df = df[df.index.str.contains(" 05:") == False]
-    df = df[df.index.str.contains(" 06:") == False]
-    df = df[df.index.str.contains(" 07:") == False]
-    df = df[df.index.str.contains(" 08:") == False]
-    df = df[df.index.str.contains(" 09:0") == False]
-    df = df[df.index.str.contains(" 09:1") == False]
-    df = df[df.index.str.contains(" 09:2") == False]
+    if config.pre_mrkt == False:
+        # drop all rows that include 0400 , 0500, 0600, 0700, 0800, and up to 0930... I'm not gonna be up at that time
+        df = df[df.index.str.contains(" 04:") == False]
+        df = df[df.index.str.contains(" 05:") == False]
+        df = df[df.index.str.contains(" 06:") == False]
+        df = df[df.index.str.contains(" 07:") == False]
+        df = df[df.index.str.contains(" 08:") == False]
+        df = df[df.index.str.contains(" 09:0") == False]
+        df = df[df.index.str.contains(" 09:1") == False]
+        df = df[df.index.str.contains(" 09:2") == False]
+    
+    if config.post_mrkt == False:
+        # drop all rows that include 1600, 1700, 1800, 1900... I'm don't want to work at that time
+        df = df[df.index.str.contains(" 16:") == False]
+        df = df[df.index.str.contains(" 17:") == False]
+        df = df[df.index.str.contains(" 18:") == False]
+        df = df[df.index.str.contains(" 19:") == False]
+    
 
     # calculate mean
     df['mean'] = df.iloc[:, 1:5].mean(axis=1)
+
+    filtered_data_filename = 'filtered-data-' + filename
+
+    df.to_csv(os.path.join(csv_save_location, filtered_data_filename))
 
     return df
