@@ -23,4 +23,4 @@ currency = 'historical'
 
 # date on which you want to analyze the stock, default='today'
 # if the file with said date does not exist then an error will be logged.
-data_date = '2023-03-20'
+data_date = '2023-03-22'

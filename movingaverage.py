@@ -31,7 +31,8 @@ filename = 'k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(t
 # grab the data whether historical or present
 df = historical_data.get_historical_data(ticker)
 
-if df == False:
+# check if the dataframe is empty
+if df.empty:
     quit()
 
 lastPrice_historical = df['mean']
