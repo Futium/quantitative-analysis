@@ -208,7 +208,7 @@ def evaluate_performance():
     data['Action'] = action
 
     # create performance figures file name
-    performance_figures_file_name = 'performance_figures_with_eval_len_' + '_k_of_' + str(k) + '_on_' + str(data_date) + '.csv'
+    performance_figures_file_name = 'performance_figures' + '_k_of_' + str(k) + '_on_' + str(data_date) + '.csv'
 
     # save to csv
     data.to_csv(os.path.join(performance_figures_folder, performance_figures_file_name))
