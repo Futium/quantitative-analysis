@@ -182,10 +182,11 @@ def evaluate_performance():
         
         # set each column equal to the nth price list
         data[data.columns[n]] = prices[n]
-
+        
         if n != 0:
              # find the names of the price columns that we are looking for
             nth_column_name = data.columns[n]
+            
             comparision_column_name = data.columns[comparison_point]
         
             # create the name of the column for the specific piece of data
@@ -194,6 +195,9 @@ def evaluate_performance():
             
             # create a table with the gains from all of the stocks
             gain_table[key_name] = 100 * (data[nth_column_name] - data[comparision_column_name]) / data[comparision_column_name]
+
+        print(data)
+
     
     gain_table.to_csv('temp.csv')
 
