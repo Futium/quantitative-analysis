@@ -17,31 +17,12 @@ t = time.localtime()
 # get today's date (this should be YYYY-MM-DD)
 today = date.today()
 
-### get historical data
-ticker = input("What Ticker are you seeking analysis on?\n").upper()
-
 k = config.k
 prec_lvl = config.prec_lvl
 csv_save_location = config.csv_save_location
 performance_folder = config.performance_folder
 performance_figures_folder = config.performance_figures_folder
 data_date = config.data_date
-
-# what the file name should be 
-filename = naming.filename(ticker)
-
-# grab the data whether historical or present
-df = historical_data.get_historical_data(ticker)
-
-# check if the dataframe is empty
-if df.empty:
-    quit()
-
-lastPrice_historical = df['mean']
-
-# iterations
-# do all data
-iterations = len(df['mean'])
 
 ### initialize lists
 change = []
@@ -50,7 +31,15 @@ current_time = []
 list_ma = []
 action = []
 
-def get_price_and_price(x):
+def get_price_and_price(x, df):
+    
+    # check if the dataframe is empty
+    if df.empty:
+        quit()
+    
+    lastPrice_historical = df['mean']
+    
+
     pct_change = []
     ticker_price.append(lastPrice_historical[x])
 
@@ -80,7 +69,19 @@ def get_price_and_price(x):
 def round_prec(x):
     return round(x, prec_lvl)
 
-def main():
+def main(ticker):
+    # what the file name should be 
+    filename = naming.filename(ticker)
+
+    
+    # grab the data whether historical or present
+    df = historical_data.get_historical_data(ticker)
+    
+    ## iterations
+    # do all data
+    iterations = len(df['mean'])
+
+
     # set first k items in the list as blank for MA and Action since we wont have a data point for it
     for i in range(k):
         list_ma.append("")
@@ -89,7 +90,7 @@ def main():
     
     ### get price info
     for x in range(iterations):
-        get_price_and_price(x)
+        get_price_and_price(x, df)
         time.sleep(0.0001)
 
 
@@ -131,7 +132,3 @@ def get_moving_average(ticker_price, x):
     else:
         action.append("-----")
         print("-----")
- 
-
-if __name__ == "__main__":
-    main()

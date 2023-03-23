@@ -1,9 +1,11 @@
 ### global variables
 
-version = '0.10'
+version = '0.1'
 
 # value of k for moving average
 k = 3
+
+auto = True
 
 # # legacy 
 # # window of evaluation (i.e. how many data points do we wait until it materializes)
