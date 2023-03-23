@@ -8,18 +8,18 @@ from pprint import pprint
 import os
 import config
 import historical_data
+import naming
 
 # get time 
 t = time.localtime()
 
-# get today's date
+# get today's date (this should be YYYY-MM-DD)
 today = date.today()
 
 ### get historical data
 ticker = input("What Ticker are you seeking analysis on?\n").upper()
 
 k = config.k
-eval_len = config.eval_len
 prec_lvl = config.prec_lvl
 csv_save_location = config.csv_save_location
 performance_folder = config.performance_folder
@@ -27,7 +27,7 @@ performance_figures_folder = config.performance_figures_folder
 data_date = config.data_date
 
 # what the file name should be 
-filename = 'k_of_' + str(k) + '_historicalRecord_for_' + ticker + '_on_' + str(data_date) + '.csv'
+filename = naming.filename(ticker)
 
 # grab the data whether historical or present
 df = historical_data.get_historical_data(ticker)
@@ -63,39 +63,21 @@ def get_price_and_price(x):
     if x == 0:
         return 0
     elif change[x] > 0:
-        print('Price: ' + colored(str(round(ticker_price[x], prec_lvl)), 'green'))
+        print('Price: ' + colored(str(round_prec(ticker_price[x])), 'green'))
         # print("\n    Change: ", colored(str(round(change[x], 6)), 'green'))
     elif change[x] < 0:
-        print('Price: ' + colored(str(round(ticker_price[x], prec_lvl)), 'red'))
+        print('Price: ' + colored(str(round_prec(ticker_price[x])), 'red'))
         # print("\n    Change: ", colored(str(round(change[x], 6)), 'red'))
     else: 
-        print('Price: ' + colored(str(round(ticker_price[x], prec_lvl)), 'grey'))
+        print('Price: ' + colored(str(round_prec(ticker_price[x])), 'grey'))
         # print("\n    Change: ", colored(str(round(change[x], 6)), 'grey'))
     
     if x >= k:
         get_moving_average(ticker_price, x)
-
-    # if ticker_price[x] > ticker_price[0]:
-    #     print(colored("            Up for Period", 'green'))
-    # elif ticker_price[x] < ticker_price[0]:
-    #     print(colored("            Down for Period", 'red'))
-    # else:
-    #     print(colored("            --", 'grey'))
-    #
-    ### acceleration
-    # acceleration = abs(pct_change[x] - pct_change[x-1])
-    #
-    # if (acceleration > 0) and (pct_change[x] > 0):
-    #     print("            ", colored(str(round(acceleration, 4)), 'green'))
-    # elif (acceleration > 0) and (pct_change[x] < 0):
-    #     print("            ", colored(str(round(acceleration, 4)), 'red'))
-    # elif (acceleration < 0) and (pct_change[x] > 0):
-    #     print("            ", colored(str(round(acceleration, 4)), 'green'))
-    # elif (acceleration < 0) and (pct_change[x] < 0):
-    #     print("            ", colored(str(round(acceleration, 4)), 'red'))
-    # else:
-    #     print(colored("            --", 'grey'))
     
+
+def round_prec(x):
+    return round(x, prec_lvl)
 
 def main():
     # set first k items in the list as blank for MA and Action since we wont have a data point for it
@@ -130,7 +112,7 @@ def get_moving_average(ticker_price, x):
     moving_avg_ewm = df.ewm(k).mean().iloc[-1].values
 
     ## round moving average to nearest 5 dec
-    rounded = round(moving_avg_ewm[0], prec_lvl)
+    rounded = round_prec(moving_avg_ewm[0])
 
     #make first k slots empty
 
@@ -169,6 +151,9 @@ def evaluate_performance():
     action = []
     current_time = []
 
+    # number of trades
+    num_of_trades = len(list_of_dfs)
+
     ### len of list_of_dfs is # of subtables 
     for n in range(len(list_of_dfs)):
         ###(list with all the data[subtable number]['Column Name'].iloc[nth row])
@@ -186,11 +171,11 @@ def evaluate_performance():
 
     ### take the performance and get them into a .csv file
     # find the performance and make them into a table
-    gain_values = [[total_gain]]
-    performance = pd.DataFrame(gain_values, columns=['Total Gain:'])
+    performance_values = [[total_gain, num_of_trades]]
+    performance = pd.DataFrame(performance_values, columns=['Total Gain:', 'Number of Trades'])
 
     # create file name for performance
-    performance_file_name = 'performance_with_for_' + ticker + '_k_of_' + str(k) + '_on_' + str(data_date) + '.csv'
+    performance_file_name = 'performance-for-' + filename
 
     # save to csv
     performance.to_csv(os.path.join(performance_folder, performance_file_name))
@@ -208,7 +193,7 @@ def evaluate_performance():
     data['Action'] = action
 
     # create performance figures file name
-    performance_figures_file_name = 'performance_figures' + '_k_of_' + str(k) + '_on_' + str(data_date) + '.csv'
+    performance_figures_file_name = 'performance-figures-'+ filename
 
     # save to csv
     data.to_csv(os.path.join(performance_figures_folder, performance_figures_file_name))
