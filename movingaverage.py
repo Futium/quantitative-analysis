@@ -105,7 +105,9 @@ def main(ticker):
     # save file to folder and filename
     price_ma_actions.to_csv(os.path.join(csv_save_location, filename))
 
-    evaluate.evaluate_performance(filename)
+    total_gain = evaluate.evaluate_performance(filename)
+
+    return total_gain
     
 
 def get_moving_average(ticker_price, x):

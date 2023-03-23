@@ -42,11 +42,12 @@ def evaluate_performance(filename):
         action.extend(list_of_dfs[n]['Action'].tolist())
 
         pct_gain.append(100 * (sell_price[n] - buy_price[n]) / buy_price[n])
-    total_gain = str(sum(pct_gain)) + '%' 
+    total_gain = sum(pct_gain)
+    ttl_gain_string = str(total_gain) + '%'
 
     ### take the performance and get them into a .csv file
     # find the performance and make them into a table
-    performance_values = [[total_gain, num_of_trades]]
+    performance_values = [[ttl_gain_string, num_of_trades]]
     performance = pd.DataFrame(performance_values, columns=['Total Gain:', 'Number of Trades'])
 
     # create file name for performance
@@ -72,3 +73,5 @@ def evaluate_performance(filename):
 
     # save to csv
     data.to_csv(os.path.join(performance_figures_folder, performance_figures_file_name))
+
+    return total_gain
