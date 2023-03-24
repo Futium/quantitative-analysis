@@ -15,7 +15,7 @@ auto = True
 pre_mrkt = False
 
 # post-market hours (default = True)
-post_mrkt = False
+post_mrkt = True
 
 # how precise we want our numbers
 prec_lvl = 5
@@ -29,10 +29,13 @@ performance_folder = 'Performance'
 # where performance figures are saved
 performance_figures_folder = 'Performance Figures'
 
+# where the overview folder is
+overview_folder = 'Overview'
+
 # decide if we want recent data or use a .csv file with the data (default='current') other option is 'historical'
-currency = 'current'
+currency = 'historical'
 
 # date on which you want to analyze the stock, default='today'
 # format: YYYY-MM-DD
-data_date = '2023-03-22'
+data_date = '2023-03-23'
 

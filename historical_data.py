@@ -36,7 +36,7 @@ def get_historical_data(ticker):
 
                 data.to_csv(os.path.join(csv_save_location, data_filename))
 
-                return filter_data(data)
+                return filter_data(data, filename)
             else:
                 print("The ticker you selected is outside the date range, historical data can only be sourced from the last 5 days. Did you mean to choose today, " + str(today) + "?")
 
@@ -46,7 +46,7 @@ def get_historical_data(ticker):
             # historical file data
             data = pd.read_csv(os.path.join(csv_save_location, data_filename))
 
-            return filter_data(data)
+            return filter_data(data, filename)
     else: 
         # today's data
         data = yf.download(ticker, period='1d', interval='1m', prepost=True)

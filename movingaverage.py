@@ -1,37 +1,19 @@
-import yfinance as yf
 import pandas as pd
 import time
 from termcolor import colored
-import numpy as np
-from datetime import date
-from pprint import pprint
 import os
 import config
 import historical_data
 import naming
 import evaluate
 
-# get time 
-t = time.localtime()
-
-# get today's date (this should be YYYY-MM-DD)
-today = date.today()
-
-k = config.k
-prec_lvl = config.prec_lvl
 csv_save_location = config.csv_save_location
 performance_folder = config.performance_folder
 performance_figures_folder = config.performance_figures_folder
-data_date = config.data_date
 
-### initialize lists
-change = []
-ticker_price = []
-current_time = []
-list_ma = []
-action = []
-
-def get_price_and_price(x, df):
+def get_price_and_price(x, df, k, change, ticker_price, current_time, list_ma, action):
+    # get time 
+    t = time.localtime()
     
     # check if the dataframe is empty
     if df.empty:
@@ -63,13 +45,22 @@ def get_price_and_price(x, df):
         # print("\n    Change: ", colored(str(round(change[x], 6)), 'grey'))
     
     if x >= k:
-        get_moving_average(ticker_price, x)
+        get_moving_average(ticker_price, x, k, list_ma, action)
     
 
 def round_prec(x):
-    return round(x, prec_lvl)
+    return round(x, config.prec_lvl)
 
 def main(ticker):
+    ### initialize lists
+    ticker_price = []
+    current_time = []
+    list_ma = []
+    action = []
+    change = []
+
+    k = config.k
+
     # what the file name should be 
     filename = naming.filename(ticker)
 
@@ -88,10 +79,13 @@ def main(ticker):
     for i in range(k):
         action.append("")
     
-    ### get price info
+    
+
+    ### get price info 
     for x in range(iterations):
-        get_price_and_price(x, df)
-        time.sleep(0.0001)
+        get_price_and_price(x, df, k, change, ticker_price, current_time, list_ma, action)
+        # # since the system only evaluating the past no need for sleep function
+        # time.sleep(0.0001)
 
 
     # add the lists to the data table for price, ma, and actions
@@ -110,15 +104,13 @@ def main(ticker):
     return total_gain
     
 
-def get_moving_average(ticker_price, x):
+def get_moving_average(ticker_price, x, k, list_ma, action):
     df = pd.DataFrame(ticker_price)
     # exponential moving average
     moving_avg_ewm = df.ewm(k).mean().iloc[-1].values
 
     ## round moving average to nearest 5 dec
     rounded = round_prec(moving_avg_ewm[0])
-
-    #make first k slots empty
 
     # add list of ma's
     list_ma.append(rounded)
