@@ -73,5 +73,3 @@ def evaluate_performance(filename):
 
     # save to csv
     data.to_csv(os.path.join(performance_figures_folder, performance_figures_file_name))
-
-    return total_gain
