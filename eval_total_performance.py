@@ -24,4 +24,3 @@ def ttl_performance(tickers):
     overview_filename = naming.filename('')
 
     df2.to_csv(os.path.join(config.overview_folder, overview_filename))
-

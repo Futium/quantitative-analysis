@@ -2,7 +2,7 @@ import config
 from movingaverage import moving_avg
 import yahoo_fin.stock_info as si
 import eval_total_performance
-import winsound
+# import winsound
 
 
 sp500 = si.tickers_sp500()
@@ -21,9 +21,9 @@ else:
 
 eval_total_performance.ttl_performance(ticker_list)
 
-frequency = 1500  # Set Frequency To 2500 Hertz
-duration = 500  # Set Duration To 1000 ms == 1 second
-repeats = 3
+# frequency = 1500  # Set Frequency To 2500 Hertz
+# duration = 500  # Set Duration To 1000 ms == 1 second
+# repeats = 3
 
-for i in range(repeats):
-    winsound.Beep(frequency-i*250, duration)
+# for i in range(repeats):
+#     winsound.Beep(frequency-i*250, duration)
