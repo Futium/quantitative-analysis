@@ -12,20 +12,14 @@ performance_folder = config.performance_folder
 performance_figures_folder = config.performance_figures_folder
 
 class moving_avg():
-    ### initialize lists
-    ticker_price = []
-    current_time = []
-    list_ma = []
-    action = []
-    change = []
 
     def __init__(self, ticker):
         ### refresh lists each time
-        ticker_price = []
-        current_time = []
-        list_ma = []
-        action = []
-        change = []
+        self.ticker_price = []
+        self.current_time = []
+        self.list_ma = []
+        self.action = []
+        self.change = []
 
         self.main(ticker)
 

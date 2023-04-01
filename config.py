@@ -33,9 +33,9 @@ performance_figures_folder = 'Performance Figures'
 overview_folder = 'Overview'
 
 # decide if we want recent data or use a .csv file with the data (default='current') other option is 'historical'
-currency = 'historical'
+currency = 'current'
 
 # date on which you want to analyze the stock, default='today'
 # format: YYYY-MM-DD
-data_date = '2023-03-23'
+data_date = 'today'
 
