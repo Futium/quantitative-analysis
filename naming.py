@@ -2,7 +2,6 @@ import config
 from datetime import date
 from datetime import datetime
 
-k = str(config.k)
 pre_mrkt = config.pre_mrkt
 post_mrkt = config.post_mrkt
 data_date = config.data_date.lower()
@@ -60,15 +59,20 @@ if data_date != 'today':
 else:
     file_date = date.today()
 
+
 # convert them to single char 
 file_dates = [str(file_date.year)[2:], make_one_char(file_date.month), make_one_char(file_date.day)]
 
-def filename(ticker):
-    # if the ticker is an actual stock
-    if ticker != '':
-        # [ticker]-[version]-[k][date][preMRKT][postMRKT].csv
-        filename = ticker + '-' + version + '-' + k + ''.join(file_dates) + pre_mrkt + post_mrkt + '.parquet'
+def filename(ticker, k):
+    if k == 'raw':
+        filename = ticker + '-' + version + '-' + ''.join(file_dates) + '.parquet'
     else: 
-        filename = version + '-' + k + ''.join(file_dates) + pre_mrkt + post_mrkt + '.csv'
+        # if the ticker is an actual stock
+        if ticker != '':
+            # [ticker]-[version]-[k][date][preMRKT][postMRKT].csv
+            filename = ticker + '-' + version + '-' + str(k) + ''.join(file_dates) + pre_mrkt + post_mrkt + '.parquet'
+        else: 
+            filename = version + '-' + str(k) + ''.join(file_dates) + pre_mrkt + post_mrkt + '.csv'
+    
 
     return filename

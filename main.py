@@ -12,6 +12,8 @@ ticker_list =  sp500 # sp500
 
 total_stock_gain = []
 
+iterations = 2
+
 start_time = time.time()
 
 if config.auto == False:
@@ -19,12 +21,15 @@ if config.auto == False:
     ticker = input("What Ticker are you seeking analysis on?\n").upper()
 
 else:
-    for ticker in ticker_list:
-        total_stock_gain.append(moving_avg((ticker)))
+    for k in range(1, iterations+1):
+        for ticker in ticker_list:
+            total_stock_gain.append(moving_avg((ticker), k))
+        eval_total_performance.ttl_performance(ticker_list, k)
+
+    
 
 print(time.time() - start_time)
 
-eval_total_performance.ttl_performance(ticker_list)
 
 # frequency = 1500  # Set Frequency To 2500 Hertz
 # duration = 500  # Set Duration To 1000 ms == 1 second

@@ -14,7 +14,7 @@ save_location = config.save_location
 today = date.today()
 
 def get_historical_data(ticker):
-    filename = naming.filename(ticker)
+    filename = naming.filename(ticker, 'raw')
 
     # date for the data we are looking for
     if config.data_date.lower() != 'today':
@@ -47,7 +47,7 @@ def get_historical_data(ticker):
     
 
 def filter_data(ticker):
-    filename = naming.filename(ticker)
+    filename = naming.filename(ticker, 'raw')
 
     # what the raw data file name should be 
     data_filename = 'raw-data-' + filename
@@ -77,6 +77,7 @@ def filter_data(ticker):
     # calculate mean
     df['mean'] = df.iloc[:, 1:5].mean(axis=1)
 
+    filename = naming.filename(ticker, '')
     filtered_data_filename = 'filtered-data-' + filename
 
     df.to_parquet(os.path.join(save_location, filtered_data_filename))

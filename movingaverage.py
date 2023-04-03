@@ -13,7 +13,7 @@ performance_figures_folder = config.performance_figures_folder
 
 class moving_avg():
 
-    def __init__(self, ticker):
+    def __init__(self, ticker, k):
         ### refresh lists each time
         self.ticker_price = []
         self.current_time = []
@@ -21,7 +21,7 @@ class moving_avg():
         self.action = []
         self.change = []
 
-        self.main(ticker)
+        self.main(ticker, k)
 
     def round_prec(x):
         return round(x, config.prec_lvl)
@@ -29,7 +29,7 @@ class moving_avg():
     def get_moving_average(self, x, k):
         df = pd.DataFrame(self.ticker_price)
         # exponential moving average
-        moving_avg_ewm = df.ewm(k).mean().iloc[-1].values
+        moving_avg_ewm = df.ewm(span=k).mean().iloc[-1].values
 
         ## round moving average to nearest 5 dec
         rounded = moving_avg.round_prec(moving_avg_ewm[0])
@@ -85,12 +85,10 @@ class moving_avg():
         if x >= k:
             moving_avg.get_moving_average(self, x, k)
 
-    def main(self, ticker):
-
-        k = config.k
+    def main(self, ticker, k):
 
         # what the file name should be 
-        filename = naming.filename(ticker)
+        filename = naming.filename(ticker, k)
 
         
         # grab the data whether historical or present
