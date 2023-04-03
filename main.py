@@ -2,14 +2,17 @@ import config
 from movingaverage import moving_avg
 import yahoo_fin.stock_info as si
 import eval_total_performance
+import time
 # import winsound
 
 
 sp500 = si.tickers_sp500()
 
-ticker_list =  sp500[:2] # sp500 
+ticker_list =  sp500 # sp500 
 
 total_stock_gain = []
+
+start_time = time.time()
 
 if config.auto == False:
     ### get historical data
@@ -18,6 +21,8 @@ if config.auto == False:
 else:
     for ticker in ticker_list:
         total_stock_gain.append(moving_avg((ticker)))
+
+print(time.time() - start_time)
 
 eval_total_performance.ttl_performance(ticker_list)
 

@@ -21,7 +21,7 @@ post_mrkt = True
 prec_lvl = 5
 
 # where CSV's will be saved
-csv_save_location = 'CSVs'
+save_location = 'parquets'
 
 # where performance bottomlines are saved
 performance_folder = 'Performance'

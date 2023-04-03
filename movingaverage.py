@@ -7,7 +7,7 @@ import historical_data
 import naming
 import evaluate
 
-csv_save_location = config.csv_save_location
+save_location = config.save_location
 performance_folder = config.performance_folder
 performance_figures_folder = config.performance_figures_folder
 
@@ -94,7 +94,7 @@ class moving_avg():
 
         
         # grab the data whether historical or present
-        df = historical_data.get_historical_data(ticker)
+        df = historical_data.filter_data(ticker)
         
         ## iterations
         # do all data
@@ -118,11 +118,12 @@ class moving_avg():
         price_ma_actions['Current Time'] = self.current_time
         price_ma_actions['Price'] = self.ticker_price
         price_ma_actions['Moving Average'] = self.list_ma
+        price_ma_actions['Moving Average'] = price_ma_actions['Moving Average'].astype(str)
         price_ma_actions['Action'] = self.action
 
 
         # save file to folder and filename
-        price_ma_actions.to_csv(os.path.join(csv_save_location, filename))
+        price_ma_actions.to_parquet(os.path.join(save_location, filename))
 
         evaluate.evaluate_performance(filename)
 

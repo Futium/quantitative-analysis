@@ -2,13 +2,13 @@ import config
 import pandas as pd
 import os
 
-csv_save_location = config.csv_save_location
+save_location = config.save_location
 performance_folder = config.performance_folder
 performance_figures_folder = config.performance_figures_folder
 
 
 def evaluate_performance(filename):
-    df2 = pd.read_csv(csv_save_location + "/" + filename)
+    df2 = pd.read_parquet(save_location + "/" + filename)
 
     df_new = df2[df2['Action'].notna()]
 
@@ -45,7 +45,7 @@ def evaluate_performance(filename):
     total_gain = sum(pct_gain)
     ttl_gain_string = str(total_gain) + '%'
 
-    ### take the performance and get them into a .csv file
+    ### take the performance and get them into a .parquet file
     # find the performance and make them into a table
     performance_values = [[ttl_gain_string, num_of_trades]]
     performance = pd.DataFrame(performance_values, columns=['Total Gain:', 'Number of Trades'])
@@ -53,8 +53,8 @@ def evaluate_performance(filename):
     # create file name for performance
     performance_file_name = 'performance-for-' + filename
 
-    # save to csv
-    performance.to_csv(os.path.join(performance_folder, performance_file_name))
+    # save to parquet
+    performance.to_parquet(os.path.join(performance_folder, performance_file_name))
 
     # print(current_time)
 
@@ -71,5 +71,5 @@ def evaluate_performance(filename):
     # create performance figures file name
     performance_figures_file_name = 'performance-figures-'+ filename
 
-    # save to csv
-    data.to_csv(os.path.join(performance_figures_folder, performance_figures_file_name))
+    # save to parquet
+    data.to_parquet(os.path.join(performance_figures_folder, performance_figures_file_name))

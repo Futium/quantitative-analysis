@@ -67,7 +67,7 @@ def filename(ticker):
     # if the ticker is an actual stock
     if ticker != '':
         # [ticker]-[version]-[k][date][preMRKT][postMRKT].csv
-        filename = ticker + '-' + version + '-' + k + ''.join(file_dates) + pre_mrkt + post_mrkt + '.csv'
+        filename = ticker + '-' + version + '-' + k + ''.join(file_dates) + pre_mrkt + post_mrkt + '.parquet'
     else: 
         filename = version + '-' + k + ''.join(file_dates) + pre_mrkt + post_mrkt + '.csv'
 

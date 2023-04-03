@@ -7,7 +7,7 @@ from datetime import datetime
 from datetime import timedelta
 import naming
 
-csv_save_location = config.csv_save_location
+save_location = config.save_location
 
 
 # get today's date
@@ -29,38 +29,30 @@ def get_historical_data(ticker):
     
     if config.currency.lower() == 'historical':
         # check if this file exists first. 
-        if not os.path.isfile(os.path.join(csv_save_location, data_filename)):
+        if not os.path.isfile(os.path.join(save_location, data_filename)):
             if (today - data_date).days <= 5:
                 # get historical data 
                 data = yf.download(ticker, start=data_date, end=data_date + timedelta(days=1), interval='1m', prepost=True)
 
-                data.to_csv(os.path.join(csv_save_location, data_filename))
-
-                return filter_data(data, filename)
+                data.to_parquet(os.path.join(save_location, data_filename))
             else:
                 print("The ticker you selected is outside the date range, historical data can only be sourced from the last 5 days. Did you mean to choose today, " + str(today) + "?")
-
-                # return FORMATTED nothing
-                return pd.Series([], dtype=pd.StringDtype())
-        else:
-            # historical file data
-            data = pd.read_csv(os.path.join(csv_save_location, data_filename))
-
-            return filter_data(data, filename)
     else: 
         # today's data
         data = yf.download(ticker, period='1d', interval='1m', prepost=True)
 
         # save file to folder and filename
-        data.to_csv(os.path.join(csv_save_location, data_filename))
-
-        return filter_data(data, filename)
+        data.to_parquet(os.path.join(save_location, data_filename))
     
     
 
-def filter_data(data, filename):
+def filter_data(ticker):
+    filename = naming.filename(ticker)
 
-    df = pd.DataFrame(data)
+    # what the raw data file name should be 
+    data_filename = 'raw-data-' + filename
+    
+    df = pd.read_parquet(os.path.join(save_location, data_filename))
 
     df.index = df.index.astype(str)
     if config.pre_mrkt == False:
@@ -87,6 +79,6 @@ def filter_data(data, filename):
 
     filtered_data_filename = 'filtered-data-' + filename
 
-    df.to_csv(os.path.join(csv_save_location, filtered_data_filename))
+    df.to_parquet(os.path.join(save_location, filtered_data_filename))
 
     return df

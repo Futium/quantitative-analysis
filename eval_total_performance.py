@@ -10,7 +10,7 @@ trades = []
 def ttl_performance(tickers):
     for ticker in tickers:
         filename = 'performance-for-' + naming.filename(ticker)
-        df = pd.read_csv(os.path.join(performance_folder, filename))
+        df = pd.read_parquet(os.path.join(performance_folder, filename))
         performance.append(df['Total Gain:'][0])
         trades.append(df['Number of Trades'][0])
 
