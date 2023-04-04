@@ -6,6 +6,8 @@ from datetime import date
 from datetime import datetime
 from datetime import timedelta
 import naming
+import yahoo_fin.stock_info as si
+import time
 
 save_location = config.save_location
 
@@ -43,8 +45,7 @@ def get_historical_data(ticker):
 
         # save file to folder and filename
         data.to_parquet(os.path.join(save_location, data_filename))
-    
-    
+
 
 def filter_data(ticker):
     filename = naming.filename(ticker, 'raw')
@@ -83,3 +84,19 @@ def filter_data(ticker):
     df.to_parquet(os.path.join(save_location, filtered_data_filename))
 
     return df
+
+
+def main():
+    sp500 = si.tickers_sp500()
+
+    ticker_list = sp500
+
+    start_time = time.time()
+    for ticker in ticker_list:
+        get_historical_data(ticker)
+
+    print(time.time() - start_time)
+
+
+if __name__ == "__main__":
+    main()

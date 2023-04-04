@@ -1,14 +1,14 @@
 import config
 from movingaverage import moving_avg
 import yahoo_fin.stock_info as si
-import eval_total_performance
+import evaluate
 import time
 # import winsound
 
 
 sp500 = si.tickers_sp500()
 
-ticker_list =  sp500 # sp500 
+ticker_list =  sp500[:2] # sp500 
 
 total_stock_gain = []
 
@@ -24,7 +24,7 @@ else:
     for k in range(1, iterations+1):
         for ticker in ticker_list:
             total_stock_gain.append(moving_avg((ticker), k))
-        eval_total_performance.ttl_performance(ticker_list, k)
+        evaluate.ttl_performance(ticker_list, k)
 
     
 

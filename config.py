@@ -21,13 +21,13 @@ post_mrkt = True
 prec_lvl = 5
 
 # where CSV's will be saved
-save_location = 'parquets'
+save_location = 'data'
 
 # where performance bottomlines are saved
-performance_folder = 'Performance'
+performance_folder = 'Performance Figures/gains'
 
 # where performance figures are saved
-performance_figures_folder = 'Performance Figures'
+performance_figures_folder = 'Performance Figures/actions'
 
 # where the overview folder is
 overview_folder = 'Overview'
@@ -37,5 +37,5 @@ currency = 'current'
 
 # date on which you want to analyze the stock, default='today'
 # format: YYYY-MM-DD
-data_date = 'today'
+data_date = '2023-04-03'
 

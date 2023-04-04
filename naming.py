@@ -74,5 +74,4 @@ def filename(ticker, k):
         else: 
             filename = version + '-' + str(k) + ''.join(file_dates) + pre_mrkt + post_mrkt + '.csv'
     
-
     return filename
