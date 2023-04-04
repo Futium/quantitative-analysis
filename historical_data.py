@@ -1,13 +1,12 @@
 import config
 import pandas as pd
-import os
+import os.path
 import yfinance as yf
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
 import naming
 import yahoo_fin.stock_info as si
-import time
 
 save_location = config.save_location
 
@@ -27,7 +26,7 @@ def get_historical_data(ticker):
         data_date = today
         
     # what the raw data file name should be 
-    data_filename = 'raw-data-' + filename
+    data_filename = "".join(['raw-data-', filename])
     
     if config.currency.lower() == 'historical':
         # check if this file exists first. 
@@ -51,7 +50,7 @@ def filter_data(ticker):
     filename = naming.filename(ticker, 'raw')
 
     # what the raw data file name should be 
-    data_filename = 'raw-data-' + filename
+    data_filename = "".join(['raw-data-', filename])
     
     df = pd.read_parquet(os.path.join(save_location, data_filename))
 
@@ -79,7 +78,7 @@ def filter_data(ticker):
     df['mean'] = df.iloc[:, 1:5].mean(axis=1)
 
     filename = naming.filename(ticker, '')
-    filtered_data_filename = 'filtered-data-' + filename
+    filtered_data_filename = "".join(['filtered-data-', filename])
 
     df.to_parquet(os.path.join(save_location, filtered_data_filename))
 
@@ -91,11 +90,8 @@ def main():
 
     ticker_list = sp500
 
-    start_time = time.time()
     for ticker in ticker_list:
         get_historical_data(ticker)
-
-    print(time.time() - start_time)
 
 
 if __name__ == "__main__":

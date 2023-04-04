@@ -1,25 +1,21 @@
 import pandas as pd
 import time
-from termcolor import colored
-import os
+# from termcolor import colored
+import os.path
+
+# local files
 import config
 import historical_data
 import naming
 import evaluate
 
-save_location = config.save_location
-performance_folder = config.performance_folder
-performance_figures_folder = config.performance_figures_folder
+save_location, performance_folder, performance_figures_folder = config.save_location, config.performance_folder, config.performance_figures_folder
 
 class moving_avg():
 
     def __init__(self, ticker, k):
         ### refresh lists each time
-        self.ticker_price = []
-        self.current_time = []
-        self.list_ma = []
-        self.action = []
-        self.change = []
+        self.ticker_price, self.current_time, self.list_ma, self.action, self.change = ([] for i in range(5))
 
         self.main(ticker, k)
 
@@ -29,20 +25,20 @@ class moving_avg():
     def get_moving_average(self, x, k):
         df = pd.DataFrame(self.ticker_price)
         # exponential moving average
-        moving_avg_ewm = df.ewm(k).mean().iloc[-1].values
+        moving_avg_ewm = moving_avg.round_prec((df.ewm(k).mean().iloc[-1].values)[0])
 
-        ## round moving average to nearest 5 dec
-        rounded = moving_avg.round_prec(moving_avg_ewm[0])
+        # ## round moving average to nearest 5 dec
+        # rounded = moving_avg.round_prec(moving_avg_ewm[0])
 
         # add list of ma's
-        self.list_ma.append(rounded)
+        self.list_ma.append(moving_avg_ewm)
 
         # print(colored('MA: ' + str(rounded), 'blue'))
 
-        if rounded > self.ticker_price[x]:
+        if moving_avg_ewm > self.ticker_price[x]:
             self.action.append("BUY")
             # print(colored("BUY", 'green'))
-        elif rounded < self.ticker_price[x]:
+        elif moving_avg_ewm < self.ticker_price[x]:
             self.action.append("SELL")
             # print(colored("SELL", 'red'))
         else:
@@ -59,7 +55,6 @@ class moving_avg():
 
         lastPrice_historical = df['mean']
 
-
         pct_change = []
         self.ticker_price.append(lastPrice_historical[x])
 
@@ -69,19 +64,6 @@ class moving_avg():
 
         pct_change.append(self.change[x] / self.ticker_price[x-1])
 
-        # print('\n')
-        # if x == 0:
-        #     return 0
-        # elif self.change[x] > 0:
-        #     print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'green'))
-        #     # print("\n    Change: ", colored(str(round(change[x], 6)), 'green'))
-        # elif self.change[x] < 0:
-        #     print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'red'))
-        #     # print("\n    Change: ", colored(str(round(change[x], 6)), 'red'))
-        # else: 
-        #     print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'grey'))
-        #     # print("\n    Change: ", colored(str(round(change[x], 6)), 'grey'))
-
         if x >= k:
             moving_avg.get_moving_average(self, x, k)
 
@@ -89,7 +71,6 @@ class moving_avg():
 
         # what the file name should be 
         filename = naming.filename(ticker, k)
-
         
         # grab the data whether historical or present
         df = historical_data.filter_data(ticker)
@@ -118,7 +99,6 @@ class moving_avg():
         price_ma_actions['Moving Average'] = self.list_ma
         price_ma_actions['Moving Average'] = price_ma_actions['Moving Average'].astype(str)
         price_ma_actions['Action'] = self.action
-
 
         # save file to folder and filename
         price_ma_actions.to_parquet(os.path.join(save_location, filename))
