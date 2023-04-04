@@ -65,7 +65,7 @@ file_dates = [str(file_date.year)[2:], make_one_char(file_date.month), make_one_
 
 def filename(ticker, k):
     if k == 'raw':
-        filename = ticker + '-' + version + '-' + ''.join(file_dates) + '.parquet'
+        filename = ticker + '-' + ''.join(file_dates) + '.parquet'
     else: 
         # if the ticker is an actual stock
         if ticker != '':
