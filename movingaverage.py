@@ -37,17 +37,17 @@ class moving_avg():
         # add list of ma's
         self.list_ma.append(rounded)
 
-        print(colored('MA: ' + str(rounded), 'blue'))
+        # print(colored('MA: ' + str(rounded), 'blue'))
 
         if rounded > self.ticker_price[x]:
             self.action.append("BUY")
-            print(colored("BUY", 'green'))
+            # print(colored("BUY", 'green'))
         elif rounded < self.ticker_price[x]:
             self.action.append("SELL")
-            print(colored("SELL", 'red'))
+            # print(colored("SELL", 'red'))
         else:
             self.action.append("-----")
-            print("-----")
+            # print("-----")
     
     def get_price_and_price(self, x, df, k):
         # get time 
@@ -69,18 +69,18 @@ class moving_avg():
 
         pct_change.append(self.change[x] / self.ticker_price[x-1])
 
-        print('\n')
-        if x == 0:
-            return 0
-        elif self.change[x] > 0:
-            print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'green'))
-            # print("\n    Change: ", colored(str(round(change[x], 6)), 'green'))
-        elif self.change[x] < 0:
-            print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'red'))
-            # print("\n    Change: ", colored(str(round(change[x], 6)), 'red'))
-        else: 
-            print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'grey'))
-            # print("\n    Change: ", colored(str(round(change[x], 6)), 'grey'))
+        # print('\n')
+        # if x == 0:
+        #     return 0
+        # elif self.change[x] > 0:
+        #     print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'green'))
+        #     # print("\n    Change: ", colored(str(round(change[x], 6)), 'green'))
+        # elif self.change[x] < 0:
+        #     print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'red'))
+        #     # print("\n    Change: ", colored(str(round(change[x], 6)), 'red'))
+        # else: 
+        #     print('Price: ' + colored(str(moving_avg.round_prec(self.ticker_price[x])), 'grey'))
+        #     # print("\n    Change: ", colored(str(round(change[x], 6)), 'grey'))
 
         if x >= k:
             moving_avg.get_moving_average(self, x, k)
