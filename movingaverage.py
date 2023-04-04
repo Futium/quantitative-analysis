@@ -29,7 +29,7 @@ class moving_avg():
     def get_moving_average(self, x, k):
         df = pd.DataFrame(self.ticker_price)
         # exponential moving average
-        moving_avg_ewm = df.ewm(span=k).mean().iloc[-1].values
+        moving_avg_ewm = df.ewm(k).mean().iloc[-1].values
 
         ## round moving average to nearest 5 dec
         rounded = moving_avg.round_prec(moving_avg_ewm[0])
