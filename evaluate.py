@@ -70,7 +70,7 @@ def evaluate_performance(filename):
     data['Action'] = action
 
     # create performance figures file name
-    performance_figures_file_name = "".join(['performance-figures-', filename])
+    performance_figures_file_name = "".join(['actions-', filename])
 
     # save to parquet
     data.to_parquet(os.path.join(performance_figures_folder, performance_figures_file_name))

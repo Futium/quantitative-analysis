@@ -44,29 +44,7 @@ class moving_avg():
         else:
             self.action.append("-----")
             # print("-----")
-    
-    def get_price_and_price(self, x, df, k):
-        # get time 
-        t = time.localtime()
-       
-        # check if the dataframe is empty
-        if df.empty:
-            quit()
-
-        lastPrice_historical = df['mean']
-
-        pct_change = []
-        self.ticker_price.append(lastPrice_historical[x])
-
-        self.current_time.append(time.strftime("%H:%M:%S", t))
-
-        self.change.append((self.ticker_price[x] - self.ticker_price[x-1]))
-
-        pct_change.append(self.change[x] / self.ticker_price[x-1])
-
-        if x >= k:
-            moving_avg.get_moving_average(self, x, k)
-
+            
     def main(self, ticker, k):
 
         # what the file name should be 
@@ -85,9 +63,16 @@ class moving_avg():
         for i in range(k):
             self.action.append("")
 
-        ### get price info 
+        lastPrice_historical = df['mean']
+
         for x in range(iterations):
-            moving_avg.get_price_and_price(self, x, df, k)
+            self.ticker_price.append(lastPrice_historical[x])
+            if x >= k:
+                moving_avg.get_moving_average(self, x, k)
+
+        self.current_time = df.index
+
+        
             # # since the system only evaluating the past no need for sleep function
             # time.sleep(0.0001)
 
@@ -102,7 +87,7 @@ class moving_avg():
 
         # save file to folder and filename
         price_ma_actions.to_parquet(os.path.join(save_location, filename))
-
+        
         evaluate.evaluate_performance(filename)
 
     

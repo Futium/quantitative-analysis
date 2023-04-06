@@ -27,7 +27,7 @@ save_location = 'data'
 performance_folder = 'Performance Figures/gains'
 
 # where performance figures are saved
-performance_figures_folder = 'Performance Figures/actions'
+performance_figures_folder = 'Performance Figures/reduced actions'
 
 # where the overview folder is
 overview_folder = 'Overview'
