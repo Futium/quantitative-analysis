@@ -1,5 +1,3 @@
-import helloworld
+import futium
 
-print(helloworld.hello());
-print(helloworld.heyman(5, "StarNight"));
-help(helloworld);
+print(futium.oneChar(10))

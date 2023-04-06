@@ -1,34 +1,31 @@
-#include "libmypy.h"
+#include "futium.h"
 
-char hellofunc_docs[] = "Hello world description.";
-char heymanfunc_docs[] = "Echo your name and passed number.";
+// states what the f(x) does
+char oneCharfunc_docs[] = "Converts number 0-35 into a character 0-9, a-z";
 
-PyMethodDef helloworld_funcs[] = {
-	{	"hello",
-		(PyCFunction)hello,
-		METH_NOARGS,
-		hellofunc_docs},
-	{	"heyman",
-		(PyCFunction)heyman,
+PyMethodDef futium_funcs[] = {
+	{	"oneChar",
+		(PyCFunction)oneChar,
 		METH_VARARGS,
-		heymanfunc_docs},
+		oneCharfunc_docs},
 	{	NULL}
 };
 
-char helloworldmod_docs[] = "This is hello world module.";
+char futiummod_docs[] = "This is Futium module.";
 
-PyModuleDef helloworld_mod = {
+PyModuleDef futium_mod = {
 	PyModuleDef_HEAD_INIT,
-	"helloworld",
-	helloworldmod_docs,
+	"futium",
+	futiummod_docs,
+	// -1 means doesnt support sub-interpreters, non-negative value would indicate memory requirement for module  
 	-1,
-	helloworld_funcs,
+	futium_funcs,
 	NULL,
 	NULL,
 	NULL,
 	NULL
 };
 
-PyMODINIT_FUNC PyInit_helloworld(void) {
-	return PyModule_Create(&helloworld_mod);
+PyMODINIT_FUNC PyInit_futium(void) {
+	return PyModule_Create(&futium_mod);
 }

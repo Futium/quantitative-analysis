@@ -1,7 +1,7 @@
 from distutils.core import setup, Extension
 
 setup(
-	name = "helloworld",
+	name = "futium",
 	version = "1.0",
-	ext_modules = [Extension("helloworld", ["bind.c", "libmypy.c"])]
+	ext_modules = [Extension("futium", ["bind.c", "futium.c"])]
 )
