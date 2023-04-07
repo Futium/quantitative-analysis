@@ -2,12 +2,18 @@
 
 // states what the f(x) does
 char oneCharfunc_docs[] = "Converts number 0-35 into a character 0-9, a-z";
+char ewmfunc_docs[] = "Finds exponential weighted moving average";
 
 PyMethodDef futium_funcs[] = {
 	{	"oneChar",
 		(PyCFunction)oneChar,
 		METH_VARARGS,
 		oneCharfunc_docs},
+	{
+		"ewm",
+		(PyCFunction)ewm,
+		METH_VARARGS,
+		ewmfunc_docs},
 	{	NULL}
 };
 

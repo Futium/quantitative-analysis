@@ -4,5 +4,6 @@
 #include <Python.h>
 
 PyObject * oneChar(PyObject *, PyObject *);
+PyObject * ewm(PyObject *, PyObject *);
 
 #endif

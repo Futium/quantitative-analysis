@@ -15,3 +15,7 @@ PyObject * oneChar(PyObject *self, PyObject *args) {
 
 	return Py_BuildValue("s", s);
 }
+
+PyObject * ewm(PyObject *self, PyObject *args) {
+	// EMA(t) = Price(t) x k + EMA(y) x (1-k)
+}
