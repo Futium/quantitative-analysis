@@ -2,11 +2,13 @@ import futium
 import pandas as pd
 # print(futium.oneChar(10))
 
-df = pd.read_parquet('df.parquet')
+# df = pd.read_parquet('df.parquet')
 
-x = df['mean'].tolist()
+# x = df['mean'].tolist()
 
-print(x)
+# print(x)
+
+print(futium.oneChar(10))
 
 # do all data
     # iterations = len(df['mean'])
