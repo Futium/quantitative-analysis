@@ -1441,6 +1441,7 @@ static PyObject *__pyx_pf_6futium_oneChar(CYTHON_UNUSED PyObject *__pyx_self, Py
  *     L = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
  * 
  *     return L[x]             # <<<<<<<<<<<<<<
+ * 
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_L, __pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
