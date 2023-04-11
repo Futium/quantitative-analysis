@@ -1,2 +1,0 @@
-# quantitative-analysis
- predictrstockpricemovement
