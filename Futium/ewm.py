@@ -1,39 +1,65 @@
-x = [137.68500137329102, 137.8637466430664, 137.88999938964844, 137.9199981689453, 137.76874923706055, 
+price_list = [137.68500137329102, 137.8637466430664, 137.88999938964844, 137.9199981689453, 137.76874923706055, 
      137.56124877929688, 137.4774932861328, 137.3687515258789, 137.2150001525879, 137.14500045776367, 
-     137.05749893188477, 136.9499969482422, 136.86999893188477, 136.8025016784668, 136.86749649047852, 
-     136.86500549316406, 136.93250274658203, 137.04125213623047, 137.08499908447266, 137.0399932861328, 
-     137.06500244140625, 136.90750122070312, 136.95449829101562, 136.89999389648438, 136.98999404907227, 
+    #  137.05749893188477, 136.9499969482422, 136.86999893188477, 136.8025016784668, 136.86749649047852, 
+    #  136.86500549316406, 136.93250274658203, 137.04125213623047, 137.08499908447266, 137.0399932861328, 
+    #  137.06500244140625, 136.90750122070312, 136.95449829101562, 136.89999389648438, 136.98999404907227, 
     
     ]
 
-
-def trad_ema():
+def get_price_and_price(choice):
     ema = []
     # just set the first value of ema to the current price bc we cant calculate it any further back
-    ema.append(x[0])
-    N = len(x)
-    for i in range(1, len(x)):
-        # it's i + 1 bc its the first 1 not the first 0 which results in nothing
-        current_price = x[:i+1]
-        
-        # EMA(t) = Price(t) x k + EMA(t-1) x (1-k)
-        # where t IS today; y IS yesterday; k = 2 / (N + 1); N is number of days in EMA
-        k = 2 / (N + 1)
+    ema.append(price_list[0])
 
-        val = (current_price[i] * k) + (ema[i-1] * (1 - k))
+    N = len(price_list)
+    k = 2 / (N + 1)
 
-        ema.append(val)
-        
+    if choice == 'a':
+        for i in range(1, len(price_list)):
+            # it's i + 1 bc its the first 1 not the first 0 which results in nothing
+            list_of_current_price = price_list[:i+1]
+            # print(list_of_current_price)
+            ema.append(trad_ema(k, list_of_current_price, ema, i))
+    else:
+        yN = []
+        yN.append(price_list[0])
+        yD = []
+        yD.append(1)
+        for n in range(1, len(price_list)):
+            # it's i + 1 bc its the first 1 not the first 0 which results in nothing
+            nth_price = price_list[n]
+            # print(list_of_current_price)
+            num, den = panda_ema(yN[n-1], yD[n-1], nth_price)
+            yN.append(num)
+            yD.append(den)
+            ema.append(num / den)
+
     return(ema)
 
-def panda_ema():
-    ema = []
-    a = 0.5
+def panda_ema(yNn_m1, yDn_m1, xn):
+    a = 0.9
     b = 1-a
 
-    for n in range(len(x)):
-        y = x[0]
-        ema.append(y)
+    # yN(n) = yN(n-1) * b + x(n)
+    yN = (yNn_m1 * b) + xn
+
+    # yD(n) = yD(n-1) * b + 1
+    yD = (yDn_m1 * b) + 1
+
+    return(yN, yD)
+
+def trad_ema(k, current_price, ema, i):
+    # EMA(t) = Price(t) x k + EMA(t-1) x (1-k)
+    # where t IS today; y IS yesterday; k = 2 / (N + 1); N is number of days in EMA
+    val = (current_price[i] * k) + (ema[i-1] * (1 - k))
+
+    return(val)
+
+
+
+print(get_price_and_price('b'))
+
+    
     # y(t) = x(t) + (1-a)^1 * x(t-1) + (1-a)^2 * x(t-2) + ... + (1-a)^t * x(0)
     #        -----------------------------------------------------------------
     #                       1 + (1-a) + (1-a)^2 + ... + (1-a)^t
@@ -45,7 +71,6 @@ def panda_ema():
     # t = 2 #   y(2) = x[2] + B^1 * x[1] + B^2 * x[0]  
 
 
-print(trad_ema())
 
 
 
