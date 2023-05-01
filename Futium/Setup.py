@@ -1,8 +1,13 @@
-import cythonbuilder as cybuilder
+from setuptools import setup
+from Cython.Build import cythonize
 import os
 import shutil
 
-cybuilder.cy_build()
+setup (
+    # name='Futium',
+    ext_modules=cythonize("futium.pyx"),
+    zip_safe=False
+)
 
 myfile = "futium.html"
 # If file exists, delete it.

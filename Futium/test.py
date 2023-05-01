@@ -1,6 +1,6 @@
 import futium
-import pandas as pd
-# print(futium.oneChar(10))
+# import pandas as pd
+print(futium.oneChar(1))
 
 # df = pd.read_parquet('df.parquet')
 
@@ -8,7 +8,7 @@ import pandas as pd
 
 # print(x)
 
-print(futium.oneChar(10))
+# print(chr(futium.oneChar(1)))
 
 # do all data
     # iterations = len(df['mean'])
